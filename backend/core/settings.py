@@ -14,7 +14,9 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+# TODO Config Database
+# TODO Config .env
+# TODO split settings.py into base.py/local.py/production.py
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -25,7 +27,7 @@ SECRET_KEY = "django-insecure-2#yiq(-k=rj)u84z242v7vct=5mlbl#q!fsq@ol-^2-81y-p+t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 REST_FRAMEWORK = {
@@ -41,6 +43,18 @@ REST_FRAMEWORK = {
 
 # Application definition
 
+LOCAL_APPS = [
+    "course.apps.CourseConfig",
+    "commons.apps.CommonsConfig",
+    "accounts.apps.AccountsConfig",
+]
+THIRD_PARTY_APPS = [
+    "djoser",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+]
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -48,17 +62,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "rest_framework.authtoken",
-    "djoser",
-    "corsheaders",
-    "course.apps.CourseConfig",
+    *THIRD_PARTY_APPS,
+    *LOCAL_APPS,
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://localhost:3000",
-]
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -125,9 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "pt-br"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Sao_Paulo"
 
 USE_I18N = True
 
@@ -149,3 +157,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+from core.plugins.cors import *
