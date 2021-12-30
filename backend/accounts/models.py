@@ -11,8 +11,12 @@ from django.utils.translation import ugettext_lazy as _
 
 class CustomUserManager(BaseUserManager):
     def _create_user(
-        self, username: str, email: str, password: Optional[str], **extra_fields
-    ):
+        self,
+        username: str,
+        email: str,
+        password: Optional[str],
+        **extra_fields: Dict[str, Any],
+    ) -> "CustomUser":
 
         if not email:
             raise ValueError("The Email must be set")
@@ -35,7 +39,11 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_user(
-        self, username: str, email: str, password: Optional[str] = None, **extra_fields
+        self,
+        username: str,
+        email: str,
+        password: Optional[str] = None,
+        **extra_fields,
     ):
         extra_fields.setdefault("is_admin", False)
         extra_fields.setdefault("is_superuser", False)
@@ -46,7 +54,11 @@ class CustomUserManager(BaseUserManager):
         )
 
     def create_superuser(
-        self, username: str, email: str, password: Optional[str] = None, **extra_fields
+        self,
+        username: str,
+        email: str,
+        password: Optional[str] = None,
+        **extra_fields,
     ):
         extra_fields.setdefault("is_admin", True)
         extra_fields.setdefault("is_superuser", True)
@@ -64,7 +76,9 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
-        "username", max_length=150, unique=True, blank=True, null=True
+        "username",
+        max_length=150,
+        unique=True,
     )
     email = models.EmailField(
         "User email",
@@ -79,7 +93,7 @@ class CustomUser(BaseModel, AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]
-    objects = CustomUserManager()
+    objects: CustomUserManager = CustomUserManager()
 
     def __str__(self) -> str:
         return self.username
@@ -89,5 +103,5 @@ class CustomUser(BaseModel, AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "users"
 
     @property
-    def is_staff(self):
+    def is_staff(self) -> bool:
         return self.is_admin
