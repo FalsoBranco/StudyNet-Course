@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.authentication import TokenAuthentication
@@ -10,26 +11,9 @@ from .serializers import (
     CategoryListSerializer,
     CommentListSerializer,
     CourseDetailSerializer,
-    CourseListSerializer,
 )
 
 # Create your views here.
-
-
-class CourseListApi(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        category_id = request.GET.get("category_id")
-        courses = Course.objects.all()
-        if category_id:
-            courses = courses.filter(categories__in=[int(category_id)])
-
-        serializer = CourseListSerializer(
-            courses, many=True, context={"request": request}
-        )
-        return Response(data=serializer.data)
 
 
 class CourseDetailApi(APIView):
@@ -78,17 +62,6 @@ class CommentListApi(APIView):
         data = serializer.data
 
         return Response(data=data)
-
-
-class CourseNewFrontPageApi(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        courses = Course.objects.all()[:4]
-        serializer = CourseListSerializer(
-            courses, many=True, context={"request": request}
-        )
-        return Response(data=serializer.data)
 
 
 class CategoryListApi(APIView):

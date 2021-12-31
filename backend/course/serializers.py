@@ -9,12 +9,6 @@ class CategoryListSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "slug")
 
 
-class CourseListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ("id", "title", "slug", "short_description", "image")
-
-
 class LessonListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson

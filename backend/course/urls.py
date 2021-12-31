@@ -1,12 +1,12 @@
 from django.urls import path
 
-from .views import (
+from course.api import CourseListApi, CourseNewFrontPageApi
+
+from .views import (  # CourseListApi,; CourseNewFrontPageApi,
     CategoryListApi,
     CommentAddApi,
     CommentListApi,
     CourseDetailApi,
-    CourseListApi,
-    CourseNewFrontPageApi,
 )
 
 app_name = "courses"
