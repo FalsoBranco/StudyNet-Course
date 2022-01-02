@@ -14,3 +14,13 @@ def course_list_by_category_id(*, category_id: int = None) -> QuerySet[Course]:
         return courses
 
     return courses.filter(categories=category_id)
+
+
+def course_get(*, slug: str) -> Course:
+    return course_list().get(slug=slug)
+
+
+def course_detail(*, slug: str) -> Course:
+    course = course_list().prefetch_related("lessons").get(slug=slug)
+
+    return course
