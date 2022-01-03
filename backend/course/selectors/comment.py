@@ -10,5 +10,4 @@ def comment_list(*, limit: int = None) -> QuerySet[Comment]:
 
 def comment_list_by_lesson(*, course_slug, lesson_slug):
     comments = comment_list().filter(lesson__slug=lesson_slug, course__slug=course_slug)
-    print(comments)
     return comments

@@ -7,9 +7,7 @@ from course.models import Category, Course, Lesson
 
 @receiver(pre_save, sender=Category)
 def pre_save_category_slug_generator(sender, instance, *args, **kwargs):
-    print("Fora do If")
     if not instance.slug:
-        print("dentro do if")
         instance.slug = unique_slug_generator(sender, instance)
 
 

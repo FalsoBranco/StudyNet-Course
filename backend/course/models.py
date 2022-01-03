@@ -4,7 +4,6 @@ from commons.models import BaseModel
 from django.db import models
 
 # Create your models here.
-# TODO slug in course/lesson
 
 
 class Category(BaseModel):
@@ -160,7 +159,9 @@ class Comment(BaseModel):
         on_delete=models.CASCADE,
     )
     lesson = models.ForeignKey(
-        Lesson, related_name="comments", on_delete=models.CASCADE
+        Lesson,
+        related_name="comments",
+        on_delete=models.CASCADE,
     )
     name = models.CharField(
         max_length=255,
@@ -172,7 +173,9 @@ class Comment(BaseModel):
     )
     content = models.TextField()
     created_by = models.ForeignKey(
-        User, related_name="comments", on_delete=models.CASCADE
+        User,
+        related_name="comments",
+        on_delete=models.CASCADE,
     )
 
     def __str__(self) -> str:

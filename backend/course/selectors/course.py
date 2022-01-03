@@ -8,7 +8,7 @@ def course_list(*, limit: int = None) -> QuerySet[Course]:
     return courses
 
 
-def course_list_by_category_id(*, category_id: int = None) -> QuerySet[Course]:
+def course_list_by_category_id(*, category_id: str = None) -> QuerySet[Course]:
     courses = course_list()
     if category_id is None:
         return courses

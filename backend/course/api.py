@@ -1,15 +1,11 @@
 from commons.utils import inline_serializer
-from django.db.models.query import QuerySet
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import redirect
-from rest_framework import serializers, status
-from rest_framework.authentication import TokenAuthentication
+from django.urls import reverse
+from rest_framework import serializers
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from course.models import Course
 from course.selectors.category import category_list
 from course.selectors.comment import comment_list_by_lesson
 from course.selectors.course import (
@@ -47,9 +43,9 @@ class CourseListApi(APIView):
         image = serializers.ImageField()
 
     def get(self, request: Request) -> Response:
-        category_id: int = request.GET.get("category_id", None)
+        category_id: str = request.GET.get("category_id", None)
 
-        courses: QuerySet[Course] = course_list_by_category_id(category_id=category_id)
+        courses = course_list_by_category_id(category_id=category_id)
 
         serializer = self.OutputSerializer(
             courses, many=True, context={"request": request}
@@ -76,9 +72,6 @@ class CourseNewFrontPageApi(APIView):
 
 
 class CourseDetailApi(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
     class OutputSerializer(serializers.Serializer):
         title = serializers.CharField()
         long_description = serializers.CharField()
@@ -102,13 +95,14 @@ class CourseDetailApi(APIView):
 
 
 class CommentListApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         name = serializers.CharField()
         content = serializers.CharField()
 
     def get(self, request: Request, course_slug: str, lesson_slug: str) -> Response:
-        print(course_slug)
         comments = comment_list_by_lesson(
             course_slug=course_slug, lesson_slug=lesson_slug
         )
