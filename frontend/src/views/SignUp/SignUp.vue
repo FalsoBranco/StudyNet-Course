@@ -1,49 +1,53 @@
-<script setup>
-import axios from 'axios'
-import { ref } from 'vue'
-import router from '../router'
+<script>
+import router from '../../router'
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const password2 = ref('')
-const errors = ref([])
+import { reactive, toRefs } from 'vue'
+import AuthServices from '../../servies/auth.services'
 
-const submitForm = () => {
-  if (username.value === '') {
-    errors.value.push('The username is missing')
-  }
-  if (email.value === '') {
-    errors.value.push('The email is missing')
-  }
-  if (password.value === '') {
-    errors.value.push('The password is missing')
-  }
-  if (password.value !== password2.value) {
-    errors.value.push('The password ate not matching')
-  }
-  if (!errors.value.length) {
-    const formData = {
-      username: username.value,
-      password: password.value,
-      email: email.value,
-    }
-    axios
-      .post('/api/v1/users/', formData)
-      .then((response) => {
-        router.push('/log-in')
-      })
-      .catch((err) => {
-        if (err.response) {
-          for (let property in err.response.data) {
-            errors.value.push(`${property}: ${err.response.data[property]}`)
-          }
-        } else if (err.message) {
-          errors.value.push('Something went wrong. Please try again')
-          console.log(JSON.stringify(err))
+export default {
+  setup() {
+    const state = reactive({
+      username: '',
+      email: '',
+      password: '',
+      password2: '',
+      errors: [],
+    })
+
+    const submitForm = () => {
+      state.errors = []
+      if (state.username === '') state.errors.push('The username is missing')
+      if (state.email === '') state.errors.push('The email is missing')
+      if (state.password === '') state.errors.push('The password is missing')
+      if (state.password !== state.password2) state.errors.push('The password are not matching')
+      if (!state.errors.length) {
+        const formData = {
+          username: state.username,
+          password: state.password,
+          email: state.email,
         }
-      })
-  }
+
+        AuthServices.register(formData)
+          .then((response) => router.push('/log-in'))
+          .catch((error) => {
+            console.log(error)
+            if (error.response) {
+              for (let property in error.response.data) {
+                state.errors.push(`${property}: ${error.response.data[property]}`)
+              }
+            } else if (error.message) {
+              state.errors.push('Something went wrong. Please try again')
+              console.log(JSON.stringify(err))
+            }
+          })
+      }
+    }
+
+    return {
+      ...toRefs(state),
+      submitForm,
+    }
+  },
 }
 </script>
 <template>
