@@ -3,6 +3,8 @@ import axios from 'axios'
 import { onMounted, reactive, ref } from 'vue-demi'
 import { useUserStore } from '../../stores/user'
 import { useRoute } from 'vue-router'
+import CourseService from '../../services/CourseService'
+import CommentService from '../../services/CommentService'
 
 const store = useUserStore()
 
@@ -18,18 +20,13 @@ const comment = reactive({
 const activeLesson = ref(null)
 
 onMounted(() => {
-  axios
-    .get(`/api/v1/courses/${courseSlug}`, {
-      headers: {
-        Authorization: `Token ${useUserStore().token}`,
-      },
-    })
-    .then((response) => {
-      const data = response.data
-      course.value = data
-      document.title = course.value.title
-    })
+  CourseService.getDetail(courseSlug, store.userToken).then((response) => {
+    const data = response.data
+    course.value = data
+    document.title = course.value.title
+  })
 })
+
 function submitComment() {
   errors.value = []
   if (comment.name === '') {
@@ -40,12 +37,7 @@ function submitComment() {
   }
   if (!errors.value.length) {
     console.log(courseSlug)
-    axios
-      .post(`/api/v1/courses/${courseSlug}/${activeLesson.value.slug}/`, comment, {
-        headers: {
-          Authorization: `Token ${useUserStore().token}`,
-        },
-      })
+    CommentService.create(courseSlug, activeLesson.value.slug, comment, store.userToken)
       .then((response) => {
         comment.name = ''
         comment.content = ''
@@ -60,16 +52,9 @@ function setActiveLesson(lesson) {
   getComments()
 }
 function getComments() {
-  console.log('testeGetComments')
-  axios
-    .get(`/api/v1/courses/${courseSlug}/${activeLesson.value.slug}/get-comments/`, {
-      headers: {
-        Authorization: `Token ${useUserStore().token}`,
-      },
-    })
-    .then((response) => {
-      comments.value = response.data
-    })
+  CommentService.listAll(courseSlug, activeLesson.value.slug, store.userToken).then((response) => {
+    comments.value = response.data
+  })
 }
 </script>
 <template>

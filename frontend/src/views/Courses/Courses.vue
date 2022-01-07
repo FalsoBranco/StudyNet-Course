@@ -1,9 +1,8 @@
 <script>
-import axios from 'axios'
 import { onMounted, ref } from 'vue'
-import { useUserStore } from '../../stores/user'
 import CourseItem from '../../components/CourseItem.vue'
-
+import CourseService from '../../services/CourseService'
+import CategoryService from '../../services/CategoryService'
 export default {
   setup() {
     const courses = ref([])
@@ -14,29 +13,16 @@ export default {
       activeCategory.value = category
       getCoursesByCategory()
     }
-    function getCoursesByCategory() {
-      let url = '/api/v1/courses/'
 
-      if (activeCategory.value.id) {
-        url += '?category_id=' + activeCategory.value.id
-      }
-      axios.get(url).then((response) => (courses.value = response.data))
+    function getCoursesByCategory() {
+      CourseService.listByCategory(activeCategory.value).then(
+        (response) => (courses.value = response.data)
+      )
     }
 
     onMounted(() => {
-      axios
-        .get('/api/v1/courses/', {
-          // headers: {
-          //   Authorization: `Token ${useUserStore().token}`,
-          // },
-        })
-        .then((response) => {
-          courses.value = response.data
-        })
-
-      axios.get('api/v1/courses/categories/').then((response) => {
-        categories.value = response.data
-      })
+      CourseService.listAll().then((response) => (courses.value = response.data))
+      CategoryService.listAll().then((response) => (categories.value = response.data))
       getCoursesByCategory()
     })
     return { courses, categories, activeCategory, setActiveCategory }
