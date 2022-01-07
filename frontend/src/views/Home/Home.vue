@@ -1,23 +1,21 @@
 <script>
+import CourseService from '../../services/CourseService'
 import { ref } from 'vue'
-import { onMounted } from 'vue-demi'
-import axios from 'axios'
+import { onMounted } from 'vue'
 import CourseItem from '../../components/CourseItem.vue'
+
 export default {
   name: 'home',
   components: { CourseItem },
   setup() {
     const newCourses = ref([])
+
     onMounted(() => {
-      axios
-        .get('/api/v1/courses/new-courses')
-        .then((response) => {
-          newCourses.value = response.data
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      CourseService.listFrontpage()
+        .then((response) => (newCourses.value = response.data))
+        .catch((error) => console.log(error))
     })
+
     return {
       newCourses,
     }
