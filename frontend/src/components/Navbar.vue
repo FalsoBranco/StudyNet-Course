@@ -1,5 +1,10 @@
 <script setup>
+import { computed } from 'vue'
 import { useUserStore } from '../stores/user'
+
+const isLogged = computed(() => {
+  return useUserStore().userToken ? true : false
+})
 </script>
 
 <template>
@@ -18,7 +23,7 @@ import { useUserStore } from '../stores/user'
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <template v-if="!useUserStore().userAuthentication">
+          <template v-if="!isLogged">
             <router-link to="/signup" class="button is-primary">
               <strong>Sign up</strong>
             </router-link>
