@@ -2,7 +2,7 @@
 import router from '../../router'
 
 import { reactive, toRefs } from 'vue'
-import AuthServices from '../../servies/auth.services'
+import AuthServices from '../../services/auth.services'
 
 export default {
   setup() {
