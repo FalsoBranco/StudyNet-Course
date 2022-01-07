@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { ref, reactive } from 'vue'
 import router from '../../router'
-import AuthServices from '../../services/auth.services'
+import AuthService from '../../services/AuthService'
 import { useUserStore } from '../../stores/user'
 
 const user = reactive({
@@ -29,7 +29,7 @@ const submitForm = () => {
       username: user.username,
       password: user.password,
     }
-    AuthServices.login(formData)
+    AuthService.login(formData)
       .then((response) => {
         const { token } = response.data
 

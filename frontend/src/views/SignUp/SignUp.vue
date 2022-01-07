@@ -2,7 +2,7 @@
 import router from '../../router'
 
 import { reactive, toRefs } from 'vue'
-import AuthServices from '../../services/auth.services'
+import AuthService from '../../services/AuthService'
 
 export default {
   setup() {
@@ -27,7 +27,7 @@ export default {
           email: state.email,
         }
 
-        AuthServices.register(formData)
+        AuthService.register(formData)
           .then((response) => router.push('/log-in'))
           .catch((error) => {
             console.log(error)

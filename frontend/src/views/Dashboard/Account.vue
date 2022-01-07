@@ -1,14 +1,14 @@
 <script setup>
 import axios from 'axios'
 import router from '../../router'
-import AuthServices from '../../services/auth.services'
+import AuthService from '../../services/AuthService'
 import { useUserStore } from '../../stores/user'
 
 const store = useUserStore()
 
 const userToken = store.userToken
 const logout = async (token) => {
-  AuthServices.logout(token)
+  AuthService.logout(token)
     // await axios
     // .post(
     //   'api/v1/token/logout',
