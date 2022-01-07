@@ -1,8 +1,8 @@
 <script>
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
-import { useUserStore } from '../stores/user'
-import CourseItem from '../components/CourseItem.vue'
+import { useUserStore } from '../../stores/user'
+import CourseItem from '../../components/CourseItem.vue'
 
 export default {
   setup() {
@@ -11,7 +11,6 @@ export default {
     const activeCategory = ref({})
 
     function setActiveCategory(category) {
-      console.log(category)
       activeCategory.value = category
       getCoursesByCategory()
     }
@@ -25,9 +24,8 @@ export default {
     }
 
     onMounted(() => {
-      console.log('mounted')
       axios
-        .get('/api/v1/courses', {
+        .get('/api/v1/courses/', {
           // headers: {
           //   Authorization: `Token ${useUserStore().token}`,
           // },
@@ -64,7 +62,7 @@ export default {
               <ul class="menu-list">
                 <li>
                   <a
-                    :class="{ 'is-active': !activeCategory.value?.id }"
+                    :class="{ 'is-active': !activeCategory.id }"
                     @click="setActiveCategory({})"
                     href="#"
                     >All courses</a
@@ -72,7 +70,7 @@ export default {
                 </li>
                 <li v-for="category in categories" :key="category.id">
                   <a
-                    :class="{ 'is-active': activeCategory?.id === category.id }"
+                    :class="{ 'is-active': activeCategory.id === category.id }"
                     @click="setActiveCategory(category)"
                     href="#"
                     >{{ category.title }}</a

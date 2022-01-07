@@ -1,8 +1,8 @@
 <script setup>
 import axios from 'axios'
 import { ref, reactive } from 'vue'
-import router from '../router'
-import { useUserStore } from '../stores/user'
+import router from '../../router'
+import { useUserStore } from '../../stores/user'
 
 const user = reactive({
   username: '',

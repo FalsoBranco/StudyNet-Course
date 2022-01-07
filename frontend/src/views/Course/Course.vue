@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios'
 import { onMounted, reactive, ref } from 'vue-demi'
-import { useUserStore } from '../stores/user'
+import { useUserStore } from '../../stores/user'
 import { useRoute } from 'vue-router'
 
 const store = useUserStore()
@@ -39,9 +39,9 @@ function submitComment() {
     errors.value.push('the content must be filled out')
   }
   if (!errors.value.length) {
-    console.log(activeLesson.value.slug)
+    console.log(courseSlug)
     axios
-      .post(`/api/v1/courses/${course.value.slug}/${activeLesson.value.slug}/`, comment, {
+      .post(`/api/v1/courses/${courseSlug}/${activeLesson.value.slug}/`, comment, {
         headers: {
           Authorization: `Token ${useUserStore().token}`,
         },
@@ -62,7 +62,7 @@ function setActiveLesson(lesson) {
 function getComments() {
   console.log('testeGetComments')
   axios
-    .get(`/api/v1/courses/${course.value.slug}/${activeLesson.value.slug}/get-comments/`, {
+    .get(`/api/v1/courses/${courseSlug}/${activeLesson.value.slug}/get-comments/`, {
       headers: {
         Authorization: `Token ${useUserStore().token}`,
       },

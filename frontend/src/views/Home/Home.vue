@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { onMounted } from 'vue-demi'
 import axios from 'axios'
-import CourseItem from '../components/CourseItem.vue'
+import CourseItem from '../../components/CourseItem.vue'
 export default {
   name: 'home',
   components: { CourseItem },

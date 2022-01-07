@@ -5,7 +5,7 @@ import { useUserStore } from '../stores/user'
 <template>
   <nav class="navbar is-info" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a href="/" class="navbar-item is-size-4">StudyNet</a>
+      <router-link to="/" class="navbar-item is-size-4">StudyNet</router-link>
     </div>
 
     <div class="navbar-menu" id="navbar-item">

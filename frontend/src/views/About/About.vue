@@ -1,3 +1,12 @@
+<script>
+export default {
+  name: 'About',
+  setup() {
+    return {}
+  },
+}
+</script>
+
 <template>
   <div class="home">
     <div class="hero is-info is-medium">
@@ -7,7 +16,7 @@
     </div>
     <section class="section">
       <div class="container">
-        <slot></slot>
+        <p>This is the about page</p>
       </div>
     </section>
   </div>
