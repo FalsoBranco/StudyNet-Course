@@ -8,6 +8,7 @@ from course.api import (
     CourseDetailApi,
     CourseListApi,
     CourseNewFrontPageApi,
+    QuizGetApi,
 )
 
 app_name = "courses"
@@ -33,10 +34,18 @@ category_urlpatterns = [
     ),
 ]
 
+quiz_urlpatterns = [
+    path(
+        "<slug:course_slug>/<slug:lesson_slug>/get-quiz/",
+        QuizGetApi.as_view(),
+        name="get",
+    ),
+]
 
 urlpatterns = [
     path("", CourseListApi.as_view(), name="list"),
     path("", include((comments_urlpatterns, "comments"))),
+    path("", include((quiz_urlpatterns, "quizzes"))),
     path("categories/", include((category_urlpatterns, "categories"))),
     path("new-courses/", CourseNewFrontPageApi.as_view(), name="list"),
     path("<slug:course_slug>/", CourseDetailApi.as_view(), name="detail"),

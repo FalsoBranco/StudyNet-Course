@@ -5,6 +5,7 @@ import { useUserStore } from '../../stores/user'
 import { useRoute } from 'vue-router'
 import CourseService from '../../services/CourseService'
 import CommentService from '../../services/CommentService'
+import QuizService from '../../services/QuizService'
 
 const store = useUserStore()
 
@@ -17,6 +18,9 @@ const comment = reactive({
   name: '',
   content: '',
 })
+const quiz = ref({})
+const quizResult = ref('')
+const selectedAnswer = ref('')
 const activeLesson = ref(null)
 
 onMounted(() => {
@@ -46,14 +50,35 @@ function submitComment() {
       .catch((err) => console.log(err.message))
   }
 }
+function submitQuiz() {
+  if (selectedAnswer.value) {
+    if (selectedAnswer.value === quiz.value.answer) {
+      quizResult.value = 'correct'
+    } else {
+      quizResult.value = 'incorrect'
+    }
+  } else {
+    alert('Select answer first')
+  }
+}
 function setActiveLesson(lesson) {
   activeLesson.value = lesson
-  console.log(lesson)
-  getComments()
+  if (lesson.lesson_type === 'quiz') {
+    getQuiz()
+  } else {
+    getComments()
+  }
+  console.log(activeLesson)
 }
 function getComments() {
   CommentService.listAll(courseSlug, activeLesson.value.slug, store.userToken).then((response) => {
     comments.value = response.data
+  })
+}
+function getQuiz() {
+  console.log(activeLesson.value.slug)
+  QuizService.listAll(courseSlug, activeLesson.value.slug, store.userToken).then((response) => {
+    quiz.value = response.data
   })
 }
 </script>
@@ -82,50 +107,102 @@ function getComments() {
                 <h2>{{ activeLesson.title }}</h2>
                 {{ activeLesson.long_description }}
                 <hr />
-                <article v-for="comment in comments" :key="comment.id" class="media box">
-                  <div class="media-content">
-                    <div class="content">
-                      <p>
-                        <strong>{{ comment.name }}</strong> {{ comment.created_at }}
-                      </p>
-                      {{ comment.content }}
-                    </div>
-                  </div>
-                </article>
-
-                <form @submit.prevent="submitComment">
-                  <div class="field">
-                    <label for="name" class="label">Name</label>
-                    <div class="control">
+                <template v-if="activeLesson.lesson_type === 'quiz'">
+                  <h3>{{ quiz.question }}</h3>
+                  <div class="control">
+                    <label for="opt1" class="radio">
                       <input
-                        v-model="comment.name"
-                        type="text"
-                        class="input"
-                        name="name"
-                        id="name"
-                      />
+                        type="radio"
+                        name="quiz_answer"
+                        id="opt1"
+                        :value="quiz.opt1"
+                        v-model="selectedAnswer"
+                      />{{ quiz.opt1 }}
+                    </label>
+                  </div>
+                  <div class="control">
+                    <label for="opt2" class="radio">
+                      <input
+                        type="radio"
+                        name="quiz_answer"
+                        id="opt2"
+                        :value="quiz.opt2"
+                        v-model="selectedAnswer"
+                      />{{ quiz.opt2 }}
+                    </label>
+                  </div>
+                  <div class="control">
+                    <label for="opt3" class="radio">
+                      <input
+                        type="radio"
+                        name="quiz_answer"
+                        id="opt3"
+                        :value="quiz.opt3"
+                        v-model="selectedAnswer"
+                      />{{ quiz.opt3 }}
+                    </label>
+                  </div>
+                  <div class="control mt-4">
+                    <button class="button is-info" @click="submitQuiz">Submit</button>
+                  </div>
+
+                  <template v-if="quizResult === 'correct'">
+                    <div class="notification is-success mt-4">Correct</div>
+                  </template>
+                  <template v-else-if="quizResult === 'incorrect'">
+                    <div class="notification is-danger mt-4">Try Again</div>
+                  </template>
+                </template>
+                <template v-if="activeLesson.lesson_type === 'article'">
+                  <article v-for="comment in comments" :key="comment.id" class="media box">
+                    <div class="media-content">
+                      <div class="content">
+                        <p>
+                          <strong>{{ comment.name }}</strong> {{ comment.created_at }}
+                        </p>
+                        {{ comment.content }}
+                      </div>
                     </div>
-                  </div>
-                  <div class="field">
-                    <label for="content" class="label">Content</label>
-                    <div class="control">
-                      <textarea
-                        v-model="comment.content"
-                        class="textarea"
-                        name="content"
-                        id="content"
-                      />
+                  </article>
+
+                  <form @submit.prevent="submitComment">
+                    <div class="field">
+                      <label for="name" class="label">Name</label>
+                      <div class="control">
+                        <input
+                          v-model="comment.name"
+                          type="text"
+                          class="input"
+                          name="name"
+                          id="name"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div v-for="(error, index) in errors" :key="index" class="notification is-danger">
-                    {{ error }}
-                  </div>
-                  <div class="field">
-                    <div class="control">
-                      <button class="button is-link">Submit</button>
+                    <div class="field">
+                      <label for="content" class="label">Content</label>
+                      <div class="control">
+                        <textarea
+                          v-model="comment.content"
+                          class="textarea"
+                          name="content"
+                          id="content"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </form>
+                    <div
+                      v-for="(error, index) in errors"
+                      :key="index"
+                      class="notification is-danger"
+                    >
+                      {{ error }}
+                    </div>
+                    <div class="field">
+                      <div class="control">
+                        <button class="button is-link">Submit</button>
+                      </div>
+                    </div>
+                  </form>
+                </template>
               </template>
               <template v-else>
                 <h2>Introduction</h2>

@@ -5,7 +5,7 @@ from django.db.models.fields.related import RelatedField
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 
-from course.models import Category, Comment, Course, Lesson
+from course.models import Category, Comment, Course, Lesson, Quiz
 
 # Register your models here.
 
@@ -88,4 +88,24 @@ class CommentAdmin(admin.ModelAdmin):
         "is_active",
     )
     search_fields = ("course", "lesson", "name")
+    list_filter = ("is_active",)
+
+
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+
+    # Admin Options
+    list_per_page = 13
+    list_display = (
+        "lesson",
+        "question",
+        "answer",
+        "opt1",
+        "opt2",
+        "opt3",
+        "created_at",
+        "updated_at",
+        "is_active",
+    )
+    search_fields = ("question", "lesson")
     list_filter = ("is_active",)

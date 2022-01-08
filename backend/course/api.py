@@ -15,6 +15,7 @@ from course.selectors.course import (
     course_list_by_category_id,
 )
 from course.selectors.lesson import lesson_get
+from course.selectors.quiz import quiz_get_by_lesson
 from course.services.comment import comment_create
 
 
@@ -81,6 +82,7 @@ class CourseDetailApi(APIView):
                 "title": serializers.CharField(),
                 "slug": serializers.CharField(),
                 "long_description": serializers.CharField(),
+                "lesson_type": serializers.CharField(source="get_lesson_type_display"),
             },
         )
 
@@ -136,3 +138,21 @@ class CommentAddApi(APIView):
         serializer_response = self.ResponseSerializer(comment)
 
         return Response(data=serializer_response.data)
+
+
+class QuizGetApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    class OutputSerializer(serializers.Serializer):
+        lesson = serializers.StringRelatedField()
+        question = serializers.CharField()
+        answer = serializers.CharField()
+        opt1 = serializers.CharField()
+        opt2 = serializers.CharField()
+        opt3 = serializers.CharField()
+
+    def get(self, request: Request, course_slug: str, lesson_slug: str) -> Response:
+
+        quiz = quiz_get_by_lesson(lesson_slug=lesson_slug)
+        serializer = self.OutputSerializer(quiz)
+        return Response(data=serializer.data)

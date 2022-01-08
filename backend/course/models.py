@@ -185,3 +185,60 @@ class Comment(BaseModel):
         verbose_name = "comment"
         verbose_name_plural = "comments"
         ordering = ["name", "-created_at"]
+
+
+# TODO Separar o modelo Quiz em Question/Quiz/Option
+class Quiz(BaseModel):
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name="quizzes",
+        on_delete=models.CASCADE,
+    )
+    question = models.CharField(
+        max_length=200,
+        verbose_name="question title",
+        help_text="format: required, max-200",
+        null=False,
+        unique=False,
+        blank=False,
+    )
+    answer = models.CharField(
+        max_length=200,
+        verbose_name="answer text",
+        help_text="format: required, max-200",
+        null=False,
+        unique=False,
+        blank=False,
+    )
+    opt1 = models.CharField(
+        max_length=200,
+        verbose_name="1st option text",
+        help_text="format: required, max-255",
+        null=False,
+        unique=False,
+        blank=False,
+    )
+    opt2 = models.CharField(
+        max_length=200,
+        verbose_name="2nd option text",
+        help_text="format: required, max-255",
+        null=False,
+        unique=False,
+        blank=False,
+    )
+    opt3 = models.CharField(
+        max_length=200,
+        verbose_name="3rd option text",
+        help_text="format: required, max-255",
+        null=False,
+        unique=False,
+        blank=False,
+    )
+
+    def __str__(self) -> str:
+        return self.question
+
+    class Meta:
+        verbose_name = "Quiz"
+        verbose_name_plural = "Quizzes"
+        ordering = ["-created_at"]
