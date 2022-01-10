@@ -3,28 +3,28 @@ import router from '../../router'
 
 import { reactive, toRefs } from 'vue'
 import AuthService from '../../services/AuthService'
+import { validateRegister } from './helper'
 
 export default {
   setup() {
-    const state = reactive({
+    const registerState = reactive({
       username: '',
       email: '',
-      password: '',
-      password2: '',
+      password: {
+        password: '',
+        confirm: '',
+      },
       errors: [],
     })
 
     const submitForm = () => {
-      state.errors = []
-      if (state.username === '') state.errors.push('The username is missing')
-      if (state.email === '') state.errors.push('The email is missing')
-      if (state.password === '') state.errors.push('The password is missing')
-      if (state.password !== state.password2) state.errors.push('The password are not matching')
-      if (!state.errors.length) {
+      registerState.errors = validateRegister(registerState)
+
+      if (!registerState.errors.length) {
         const formData = {
-          username: state.username,
-          password: state.password,
-          email: state.email,
+          username: registerState.username,
+          password: registerState.password.password,
+          email: registerState.email,
         }
 
         AuthService.register(formData)
@@ -33,10 +33,10 @@ export default {
             console.log(error)
             if (error.response) {
               for (let property in error.response.data) {
-                state.errors.push(`${property}: ${error.response.data[property]}`)
+                registerState.errors.push(`${property}: ${error.response.data[property]}`)
               }
             } else if (error.message) {
-              state.errors.push('Something went wrong. Please try again')
+              registerState.errors.push('Something went wrong. Please try again')
               console.log(JSON.stringify(err))
             }
           })
@@ -44,7 +44,7 @@ export default {
     }
 
     return {
-      ...toRefs(state),
+      ...toRefs(registerState),
       submitForm,
     }
   },
@@ -84,7 +84,7 @@ export default {
               <label for="password">Password</label>
               <div class="control">
                 <input
-                  v-model="password"
+                  v-model="password.password"
                   id="password"
                   name="password"
                   type="password"
@@ -96,7 +96,7 @@ export default {
               <label for="password2">Repeat Password</label>
               <div class="control">
                 <input
-                  v-model="password2"
+                  v-model="password.confirm"
                   id="password2"
                   name="password2"
                   type="password"
