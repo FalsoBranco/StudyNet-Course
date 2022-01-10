@@ -1,28 +1,23 @@
 <script setup>
-import axios from 'axios'
+import http from '../../plugins/axios'
 import { ref, reactive } from 'vue'
 import router from '../../router'
 import AuthService from '../../services/AuthService'
 import { useUserStore } from '../../stores/user'
+import { validateLogin } from './helper'
 
+const UserStore = useUserStore()
 const user = reactive({
   username: '',
   password: '',
 })
-// const username = ref('')
-// const password = ref('')
 const errors = ref([])
 
 const submitForm = () => {
-  axios.defaults.headers.common['Authorization'] = ''
+  http.defaults.headers.common['Authorization'] = ''
   localStorage.removeItem('token')
-  if (user.username === '') {
-    errors.value.push('The username is missing')
-  }
-
-  if (user.password === '') {
-    errors.value.push('The password is missing')
-  }
+  errors.value = []
+  validateLogin(user)
 
   if (!errors.value.length) {
     const formData = {
@@ -31,12 +26,11 @@ const submitForm = () => {
     }
     AuthService.login(formData)
       .then((response) => {
-        const { token } = response.data
-
-        useUserStore().setToken(token)
-        axios.defaults.headers.common['Authentication'] = 'Token' + token
+        const token = response.data.auth_token
+        UserStore.setToken(token)
+        http.defaults.headers.common['Authentication'] = 'Token' + token
         localStorage.setItem('token', token)
-        router.push('/dashboard/account')
+        router.push({ name: 'Account' })
       })
       .catch((err) => {
         if (err.response) {
