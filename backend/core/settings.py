@@ -17,6 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # TODO Config Database
 # TODO Config .env
 # TODO split settings.py into base.py/local.py/production.py
+# TODO Add Django/RestFramework stubs
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

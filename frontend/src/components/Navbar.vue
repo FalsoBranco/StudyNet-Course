@@ -2,8 +2,10 @@
 import { computed } from 'vue'
 import { useUserStore } from '../stores/user'
 
+const UserStore = useUserStore()
+
 const isLogged = computed(() => {
-  return useUserStore().userToken ? true : false
+  return UserStore.token ? true : false
 })
 </script>
 

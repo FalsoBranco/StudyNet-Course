@@ -1,5 +1,4 @@
 from commons.utils import inline_serializer
-from django.urls import reverse
 from rest_framework import serializers
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
@@ -82,17 +81,28 @@ class CourseDetailApi(APIView):
                 "title": serializers.CharField(),
                 "slug": serializers.CharField(),
                 "long_description": serializers.CharField(),
-                "lesson_type": serializers.CharField(source="get_lesson_type_display"),
+                "lesson_type": serializers.CharField(
+                    source="get_lesson_type_display",
+                ),
             },
         )
 
     def get(self, request: Request, course_slug: str) -> Response:
 
         course = course_detail(slug=course_slug)
-        serializer = self.OutputSerializer(course, context={"request", request})
+        serializer = self.OutputSerializer(
+            course,
+            context={"request", request},
+        )
         # course_serializer = CourseDetailSerializer(course)
-        # lesson_serializer = LessonListSerializer(course.lessons.all(), many=True)
-        # data = {"course": course_serializer.data, "lessons": lesson_serializer.data}
+        # lesson_serializer = LessonListSerializer(
+        #     course.lessons.all(),
+        #     many=True,
+        # )
+        # data = {
+        #     "course": course_serializer.data,
+        #     "lessons": lesson_serializer.data,
+        # }
         return Response(data=serializer.data)
 
 
@@ -104,7 +114,12 @@ class CommentListApi(APIView):
         name = serializers.CharField()
         content = serializers.CharField()
 
-    def get(self, request: Request, course_slug: str, lesson_slug: str) -> Response:
+    def get(
+        self,
+        request: Request,
+        course_slug: str,
+        lesson_slug: str,
+    ) -> Response:
         comments = comment_list_by_lesson(
             course_slug=course_slug, lesson_slug=lesson_slug
         )
@@ -130,10 +145,10 @@ class CommentAddApi(APIView):
         course = course_get(slug=course_slug)
         lesson = lesson_get(slug=lesson_slug)
         comment = comment_create(
-            **serializer.validated_data,
             user=request.user,
             lesson=lesson,
             course=course,
+            **serializer.validated_data,
         )
         serializer_response = self.ResponseSerializer(comment)
 
@@ -151,8 +166,7 @@ class QuizGetApi(APIView):
         opt2 = serializers.CharField()
         opt3 = serializers.CharField()
 
-    def get(self, request: Request, course_slug: str, lesson_slug: str) -> Response:
-
+    def get(self, request: Request, lesson_slug: str, **kwargs) -> Response:
         quiz = quiz_get_by_lesson(lesson_slug=lesson_slug)
         serializer = self.OutputSerializer(quiz)
         return Response(data=serializer.data)

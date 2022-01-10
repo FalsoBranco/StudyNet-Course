@@ -1,8 +1,8 @@
 import http from '../plugins/axios'
 
 class AuthServices {
-  login(userInfo) {
-    return http.post('/api/v1/token/login/', userInfo)
+  async login(userInfo) {
+    return await http.post('/api/v1/token/login/', userInfo)
   }
   register(userInfo) {
     return http.post('/api/v1/users/', userInfo)
