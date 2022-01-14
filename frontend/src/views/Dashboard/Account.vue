@@ -1,44 +1,32 @@
 <script setup>
-import axios from 'axios'
 import router from '../../router'
 import AuthService from '../../services/AuthService'
 import { useUserStore } from '../../stores/user'
+import Hero from '../../layout/Hero.vue'
+import Section from '../../layout/Section.vue'
+import axios from '../../plugins/axios'
 
 const store = useUserStore()
 
 const userToken = store.userToken
+
 const logout = async (token) => {
   AuthService.logout(token)
-    // await axios
-    // .post(
-    //   'api/v1/token/logout',
-    //   {},
-    //   {
-    //     headers: {
-    //       Authorization: `token ${token}`,
-    //     },
-    //   }
-    // )
     .then((response) => {
-      response.data
+      // response.data
     })
     .catch((error) => console.log(error.message))
-  axios.defaults.headers.common['Authorization'] = ''
   localStorage.removeItem('token')
-  useUserStore().removeToken()
+  store.removeToken()
   router.push('/')
 }
 </script>
 
 <template>
-  <div class="home">
-    <div class="hero is-info is-medium">
-      <div class="hero-body has-text-centered">
-        <h1 class="title">Welcome to StudyNet</h1>
-      </div>
-    </div>
-    <section class="section">
+  <div class="account">
+    <Hero> Welcome to StudyNet </Hero>
+    <Section>
       <button @click="logout(userToken)" class="btn is-danger">Log out</button>
-    </section>
+    </Section>
   </div>
 </template>

@@ -1,23 +1,25 @@
 <script>
+import Hero from '../../layout/Hero.vue'
+import Section from '../../layout/Section.vue'
+import Container from '../../layout/Container.vue'
 export default {
   name: 'About',
   setup() {
     return {}
   },
+  components: { Hero, Section, Container },
 }
 </script>
 
 <template>
   <div class="home">
-    <div class="hero is-info is-medium">
-      <div class="hero-body has-text-centered">
-        <h1 class="title">Welcome to StudyNet</h1>
-      </div>
-    </div>
-    <section class="section">
-      <div class="container">
+    <Hero>
+      <span> Welcome to StudyNet </span>
+    </Hero>
+    <Section>
+      <Container>
         <p>This is the about page</p>
-      </div>
-    </section>
+      </Container>
+    </Section>
   </div>
 </template>

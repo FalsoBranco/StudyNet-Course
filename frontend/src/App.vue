@@ -6,13 +6,6 @@ import { useUserStore } from './stores/user'
 
 const store = useUserStore()
 store.initializeStore()
-
-const token = store.userToken
-if (token) {
-  axios.defaults.headers.common['Authorization'] = 'token' + token.value
-} else {
-  axios.defaults.headers.common['Authorization'] = ''
-}
 </script>
 
 <template>
